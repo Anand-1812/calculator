@@ -3,9 +3,27 @@ let currentOperator = null;
 let currentNumber = "0";
 let previousNumber = null;
 
-function operate(op) {
-    if (op === "+") {
 
+// Handles the calculator operation
+function operate(num1, num2, op) {
+    const ans = document.querySelector(".text");
+    const number1 = parseFloat(num1);
+    const number2 = parseFloat(num2);
+    switch (op) {
+        case "+":
+            ans.textContent = number1 + number2;
+            break;
+        case "-":
+            ans.textContent = number1 - number2;
+            break;
+        case "*":
+            ans.textContent = number1 * number2;
+        case "/":
+            ans.textContent = number1 / number2;
+        case "%":
+            ans.textContent = number1 % number2;
+        default:
+            break;
     }
 }
 
@@ -52,4 +70,9 @@ clearBtn.addEventListener("click", () => {
     currentNumber = "0";
     previousNumber = null;
     currentOperator = null;
+})
+
+const equal = document.querySelector(".equal");
+equal.addEventListener("click", () => {
+    operate(previousNumber, currentNumber, currentOperator);
 })
