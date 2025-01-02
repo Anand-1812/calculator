@@ -18,10 +18,13 @@ function operate(num1, num2, op) {
             break;
         case "*":
             ans.textContent = number1 * number2;
+            break;
         case "/":
             ans.textContent = number1 / number2;
+            break;
         case "%":
             ans.textContent = number1 % number2;
+            break;
         default:
             break;
     }
@@ -76,3 +79,15 @@ const equal = document.querySelector(".equal");
 equal.addEventListener("click", () => {
     operate(previousNumber, currentNumber, currentOperator);
 })
+
+const backBtn = document.querySelector(".delete");
+const display = document.querySelector(".text");
+backBtn.addEventListener("click", () => {
+    let currentText = display.textContent;
+
+    if (currentText.length > 1) {
+        display.textContent = currentText.slice(0, -1);
+    } else {
+        display.textContent = "0";
+    }
+});
