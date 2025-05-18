@@ -1,93 +1,98 @@
-let answer;
-let currentOperator = null;
-let currentNumber = "0";
-let previousNumber = null;
+function createCalculator(displayElement) {
+    let currentOperator = null;
+    let currentNumber = "0";
+    let previousNumber = null;
 
-
-// Handles the calculator operation
-function operate(num1, num2, op) {
-    const ans = document.querySelector(".text");
-    const number1 = parseFloat(num1);
-    const number2 = parseFloat(num2);
-    switch (op) {
-        case "+":
-            ans.textContent = number1 + number2;
-            break;
-        case "-":
-            ans.textContent = number1 - number2;
-            break;
-        case "*":
-            ans.textContent = number1 * number2;
-            break;
-        case "/":
-            ans.textContent = number1 / number2;
-            break;
-        case "%":
-            ans.textContent = number1 % number2;
-            break;
-        default:
-            break;
+    function updateDisplay() {
+        displayElement.textContent = currentNumber;
     }
+
+    return {
+        clear() {
+            currentNumber = "0";
+            previousNumber = null;
+            currentOperator = null;
+            updateDisplay();
+        },
+        appendNumber(number) {
+            if (currentNumber === "0") {
+                currentNumber = number;
+            } else {
+                currentNumber += number;
+            }
+            updateDisplay();
+        },
+        chooseOperator(operator) {
+            if (previousNumber === null && currentNumber !== "0") {
+                previousNumber = currentNumber;
+            }
+            currentOperator = operator;
+            currentNumber = "0";
+        },
+        compute() {
+            const number1 = parseFloat(previousNumber);
+            const number2 = parseFloat(currentNumber);
+            if (isNaN(number1) || isNaN(number2)) return;
+            let result;
+            switch (currentOperator) {
+                case "+":
+                    result = number1 + number2;
+                    break;
+                case "-":
+                    result = number1 - number2;
+                    break;
+                case "*":
+                    result = number1 * number2;
+                    break;
+                case "/":
+                    result = number1 / number2;
+                    break;
+                case "%":
+                    result = number1 % number2;
+                    break;
+                default:
+                    break;
+            }
+            currentNumber = result.toString();
+            previousNumber = null;
+            currentOperator = null;
+            updateDisplay();
+        },
+        delete() {
+            if (currentNumber.length > 1) {
+                currentNumber = currentNumber.slice(0, -1);
+            } else {
+                currentNumber = "0";
+            }
+            updateDisplay();
+        }
+    };
 }
 
-const operator = document.querySelectorAll(".operator");
-operator.forEach((op) => {
-    op.addEventListener("click", (e) => {
-        // store the operator
-        const target = e.currentTarget;
-        currentOperator = target.textContent;
-        console.log(target.textContent);
-
-        if (previousNumber === null && currentNumber !== "0") {
-            previousNumber = currentNumber;
-        }
-        console.log(`Previous number: ${previousNumber}`);
-
-        const ans = document.querySelector(".text");
-        ans.textContent = "0";
-    })
-})
-
-const displayNum = document.querySelectorAll(".num");
-displayNum.forEach((no) => {
-    no.addEventListener("click", (e) => {
-        // for the number
-        const num = e.currentTarget.textContent;
-        const ans = document.querySelector(".text")
-        // console.log(num);
-        if (ans.textContent === "0") {
-            ans.textContent = num;
-        } else {
-            ans.textContent += num;
-        }
-        currentNumber = ans.textContent;
-        console.log(`current number: ${currentNumber}`);
-    })
-})
-
-// clears the text in the display
-const clearBtn = document.querySelector(".clear");
-clearBtn.addEventListener("click", () => {
-    const ans = document.querySelector(".text")
-    ans.textContent = "0";
-    currentNumber = "0";
-    previousNumber = null;
-    currentOperator = null;
-})
-
-const equal = document.querySelector(".equal");
-equal.addEventListener("click", () => {
-    operate(previousNumber, currentNumber, currentOperator);
-})
-
-const backBtn = document.querySelector(".delete");
 const display = document.querySelector(".text");
-backBtn.addEventListener("click", () => {
-    let currentText = display.textContent;
+// calculator object
+const calculator = createCalculator(display);
 
-    if (currentText.length > 1) {
-        display.textContent = currentText.slice(0, -1);
-    } else {
-        display.textContent = "0";
-    }
+document.querySelectorAll(".num").forEach(button => {
+    button.addEventListener("click", () => {
+        calculator.appendNumber(button.textContent);
+    });
+});
+
+document.querySelectorAll(".operator").forEach(button => {
+    button.addEventListener("click", () => {
+        calculator.chooseOperator(button.textContent);
+    });
+});
+
+document.querySelector(".equal").addEventListener("click", () => {
+    calculator.compute();
+});
+
+document.querySelector(".clear").addEventListener("click", () => {
+    calculator.clear();
+});
+
+document.querySelector(".delete").addEventListener("click", () => {
+    calculator.delete();
 });
